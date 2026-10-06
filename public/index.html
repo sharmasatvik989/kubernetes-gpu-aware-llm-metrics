@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explainable GPU-aware routing for Kubernetes-hosted LLM inference.">
+  <title>RouteForge — GPU-Aware LLM Routing</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23080c12'/%3E%3Cpath d='M7 9h8l4 7h6M7 23h8l4-7' fill='none' stroke='%236cf5b3' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/assets/workspace.css">
+  <link rel="stylesheet" href="/assets/visual-refresh.css">
+  <link rel="stylesheet" href="/assets/product-v2.css">
+</head>
+<body>
+  <header><a class="brand" href="#">Route<span>Forge</span></a><div class="cluster-state"><i></i> Kubernetes GPU fleet online</div><a href="https://github.com/sharmasatvik989" target="_blank" rel="noreferrer">GitHub</a></header>
+  <main class="control-plane">
+    <aside class="controls">
+      <div class="product-intro"><p class="eyebrow">Kubernetes capacity planner</p><h1>Inference deployment</h1><p>Translate model demand into pods, GPU capacity, memory, networking, and autoscaling boundaries.</p></div>
+      <form id="route-form">
+        <div class="form-heading"><p class="eyebrow">Workload</p><h2>Deployment inputs</h2></div>
+        <label>Use case<select id="use-case"></select></label>
+        <label>Model<select id="model"></select></label>
+        <div class="model-profile" id="model-profile"></div>
+        <label>Processing mode<select id="mode"><option value="synchronous">Synchronous</option><option value="hybrid" selected>Hybrid</option><option value="asynchronous">Asynchronous batch</option></select></label>
+        <label class="range-label"><span>Tokens per request</span><output id="tokens-output">1024</output><input id="tokens" type="range" value="1024" min="32" max="8192" step="32"></label>
+        <label>Incoming requests per second<input id="rps" type="number" value="1000" min="1" max="1000000" step="100"></label>
+        <div class="rps-presets"><button type="button" data-rps="1000">1K</button><button type="button" data-rps="10000">10K</button><button type="button" data-rps="100000">100K</button><button type="button" data-rps="1000000">1M</button></div>
+        <label class="range-label"><span>Cache hit rate</span><output id="cache-output">20%</output><input id="cache" type="range" value="20" min="0" max="95" step="5"></label>
+        <label>Dynamic batch size<select id="batch"><option>1</option><option>4</option><option selected>8</option><option>16</option><option>32</option><option>64</option></select></label>
+        <label class="range-label"><span>Maximum GPU pods</span><output id="max-pods-output">38</output><input id="max-pods" type="range" value="38" min="1" max="100"></label>
+        <label class="range-label"><span>Gateway threads</span><output id="threads-output">20</output><input id="threads" type="range" value="20" min="1" max="128"></label>
+        <label class="range-label"><span>p95 latency SLO</span><output id="slo-output">500 ms</output><input id="slo" type="range" value="500" min="100" max="3000" step="50"></label>
+      </form>
+      <div class="assumption"><p class="eyebrow">Planning assumptions</p><p>68% target GPU utilization · three availability zones · model weights cached · steady request distribution</p></div>
+    </aside>
+    <section class="operations">
+      <div class="operations-head"><div><p class="eyebrow">Orchestration plan</p><h2 id="plan-title">Calculating deployment…</h2></div><div class="slo-badge" id="slo-badge">Evaluating SLO</div></div>
+      <div class="traffic-flow" id="traffic-flow"></div>
+      <div class="summary" id="metrics"></div>
+      <div class="topology"><div class="table-head"><div><p class="eyebrow">Replica topology</p><h2>Pods and GPU allocation</h2></div><span id="pod-count"></span></div><div class="pod-canvas" id="pods"></div></div>
+      <div class="plan-grid"><section class="resource-panel"><p class="eyebrow">Resource envelope</p><div id="resources"></div></section><section class="why-panel"><p class="eyebrow">Why this configuration</p><ol id="why"></ol></section></div>
+    </section>
+  </main>
+  <template id="pod-template"><article class="pod"><div class="pod-head"><span class="health"></span><strong></strong><span class="zone"></span></div><div class="gpu-chip"></div><div class="pod-stat"><span>GPU</span><strong class="util"></strong><div class="bar"><i></i></div></div><div class="pod-stat"><span>Memory</span><strong class="memory"></strong></div></article></template>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>

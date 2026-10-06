@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-aware-router
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: gpu-aware-router }
+  template:
+    metadata:
+      labels: { app: gpu-aware-router }
+    spec:
+      containers:
+        - name: router
+          image: ghcr.io/sharmasatvik989/gpu-aware-router:latest
+          ports: [{ containerPort: 8080 }]
+          readinessProbe:
+            httpGet: { path: /api/health, port: 8080 }
+          resources:
+            requests: { cpu: 250m, memory: 256Mi }
+            limits: { cpu: "1", memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpu-aware-router
+spec:
+  selector: { app: gpu-aware-router }
+  ports: [{ port: 80, targetPort: 8080 }]
+
