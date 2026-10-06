@@ -28,14 +28,14 @@ class PlanRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return FileResponse(PUBLIC / "index.html")
+    return FileResponse(PUBLIC / "index.html", headers={"Cache-Control": "no-store"})
 
 
 @app.get("/assets/{name}", include_in_schema=False)
 def asset(name: str):
     if name not in ASSETS:
         raise HTTPException(status_code=404, detail="Not found")
-    return FileResponse(PUBLIC / name)
+    return FileResponse(PUBLIC / name, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/api/health")
