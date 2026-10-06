@@ -33,14 +33,22 @@ def home():
                     ("styles.css", "workspace.css", "visual-refresh.css", "product-v2.css"))
     javascript = (PUBLIC / "app.js").read_text()
     for name in ("styles.css", "workspace.css", "visual-refresh.css", "product-v2.css"):
-        html = html.replace(f'<link rel="stylesheet" href="/assets/{name}?v=3">', "")
+        html = html.replace(f'<link rel="stylesheet" href="/{name}?v=4">', "")
     html = html.replace("</head>", f"<style>{css}</style></head>")
-    html = html.replace('<script src="/assets/app.js?v=3" defer></script>', f"<script>{javascript}</script>")
+    html = html.replace('<script src="/app.js?v=4" defer></script>', f"<script>{javascript}</script>")
     return HTMLResponse(html, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/assets/{name}", include_in_schema=False)
 def asset(name: str):
+    if name not in ASSETS:
+        raise HTTPException(status_code=404, detail="Not found")
+    return FileResponse(PUBLIC / name, headers={"Cache-Control": "no-store"})
+
+
+@app.get("/{name}", include_in_schema=False)
+def root_asset(name: str):
+    """Match Vercel's public-directory URLs during local development."""
     if name not in ASSETS:
         raise HTTPException(status_code=404, detail="Not found")
     return FileResponse(PUBLIC / name, headers={"Cache-Control": "no-store"})
