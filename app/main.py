@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
 from .planner import MODELS, catalog, deployment_plan
@@ -28,7 +28,15 @@ class PlanRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return FileResponse(PUBLIC / "index.html", headers={"Cache-Control": "no-store"})
+    html = (PUBLIC / "index.html").read_text()
+    css = "\n".join((PUBLIC / name).read_text() for name in
+                    ("styles.css", "workspace.css", "visual-refresh.css", "product-v2.css"))
+    javascript = (PUBLIC / "app.js").read_text()
+    for name in ("styles.css", "workspace.css", "visual-refresh.css", "product-v2.css"):
+        html = html.replace(f'<link rel="stylesheet" href="/assets/{name}?v=3">', "")
+    html = html.replace("</head>", f"<style>{css}</style></head>")
+    html = html.replace('<script src="/assets/app.js?v=3" defer></script>', f"<script>{javascript}</script>")
+    return HTMLResponse(html, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/assets/{name}", include_in_schema=False)
