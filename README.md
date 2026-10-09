@@ -1,5 +1,9 @@
 # Kubernetes GPU-Aware LLM Routing Platform
 
+## Visitor analytics
+
+The production site includes Vercel Web Analytics for privacy-safe page views and unique visitor reporting. Enable **Web Analytics** from the Vercel project dashboard and redeploy after enabling it. Visitor data is available under the project's **Analytics** tab.
+
 An interactive Kubernetes capacity planner for model inference workloads. It translates use case, model, token volume, request rate, and latency SLO into pods, GPU allocation, memory, network demand, and autoscaling boundaries.
 
 ## Version 1
